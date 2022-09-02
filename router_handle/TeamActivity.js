@@ -60,9 +60,11 @@ function createTeamActivity  (req, res) {
         // console.log(payload)
         const username = payload.username
         const userID = payload.id
+        const newCaptain = payload.username
+        const captainID = payload.id
         const sqliIns = `insert into team_activity set?`
 
-        db.query(sqliIns,[{username,userID,teamName,teamID,acti_name,acti_utc,acti_date,acti_type,acti_region, acti_desc,acti_resource,acti_isOnApply:1}],(err1,res1)=>{
+        db.query(sqliIns,[{username,userID,teamName,teamID,newCaptain,captainID,acti_name,acti_utc,acti_date,acti_type,acti_region, acti_desc,acti_resource,acti_isOnApply:1}],(err1,res1)=>{
             if(err1) {return res.func(err1)}
             // console.log(res1)
             if(res1.affectedRows !==1){return res.func('申请活动失败，请重试')}
@@ -113,7 +115,7 @@ function getTeamActivity (req,res) {
 
 function deleteActivity (req,res){
     // res.func('收到删除申请',200)
-    console.log(req.body)
+    // console.log(req.body)
     db.query(`select 1`,(err,result)=>{
         if(err){
             return res.func('连接数据库失败')
@@ -123,27 +125,39 @@ function deleteActivity (req,res){
     })
         const token = req.headers['authorization'].split(' ')[1]
         const acti_id = req.body.acti_id
-        const userID = req.body.userID
+        // const userID = req.body.userID
         // console.log(token)
         jwt.verify(token, config.jwtSecretKey, (error, payload) => {
             if (error) {
                 return res.func('token过期，请重新登录',401)
             }
-            // console.log("111")
-                const sql = `update team_activity set? where id=? and userID=?`
-                db.query(sql, [{acti_isOnApply:0},acti_id, userID], (err1, res1) => {
 
-                    if (err1) {
-                        return res.func(err1)
-                    }
-                    // console.log(res1)
-                    console.log(res1.affectedRows)
-                    if (res1.affectedRows !== 1) {
-                         res.func('删除失败，请重试', 400)
-                    }else {
-                        res.func('删除成功', 200)
-                    }
-                })
+            /*检查所传acti_id是否与用户本人所创建的acti_id相匹配*/
+            const userID = payload.id
+            const sql = `select id from team_activity where captainID=? and acti_isOnApply=1`
+            db.query(sql,userID,(err,result)=>{
+                // console.log(result)
+                if (err) {
+                    return res.func(err)
+                }
+                if (result.length ===1 && result[0].id === acti_id){
+                    // return res.func()
+                    const sql1 = `update team_activity set? where id=? and captainID=?`
+                    db.query(sql1, [{acti_isOnApply:0},acti_id, userID], (err1, res1) => {
+                        if (err1) {
+                            return res.func(err1)
+                        }
+                        // console.log(res1)
+                        if (res1.affectedRows !== 1) {
+                            return res.func('删除球队活动失败，请重试', 400)
+                        }else {
+                           return res.func('删除球队活动成功', 200)
+                        }
+                    })
+                    return
+                }
+                res.func('所提交活动ID不符合',400)
+            })
         })
 }
 

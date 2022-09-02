@@ -291,6 +291,7 @@ function teamQuit (req,res) {
         // res.func('队员退出球队申请完成',200)
         if (req.body.newCaptain !=='') {
 
+            //指定了新队长
             const SqlTest = `select CaptainID from team_test where id=?`
             db.query(SqlTest,teamID,(err3,res3)=>{
                 if (err3) {
@@ -309,6 +310,34 @@ function teamQuit (req,res) {
                 const newCaptain = req.body.newCaptain.username
                 const CaptainID = req.body.newCaptain.id
                 const sqlUpt1 = `update team_test set? where ID=?`
+
+                //检查是否创建了活动
+                const sql1 = `select captainID from team_activity where teamID=? and acti_isOnApply=1`
+                db.query(sql1,teamID,(err3,res3)=>{
+                    // console.log(res3)
+                    if (err3) {
+                        return res.func(err3)
+                    }
+                    if(res3.length > 1) {
+                        return res.func('在核对球队活动信息时出错')
+                    }
+                    if (res3.lenth === 1 && res3[0].captainID !== userID){
+                        return res.func('在核对球队活动信息时出错')
+                    }
+                    if (res3.length ===1 && res3[0].captainID === userID){
+                        // return  res.func('这个活动的管理权限者不是你',400)
+                        const sql2 = `update team_activity set? where teamID=? and acti_isOnApply=1`
+                        db.query(sql2,[{newCaptain, CaptainID}, teamID],(err4,res4)=>{
+                            if (err4) {
+                                return res.func(err4)
+                            }
+                            if (res4.affectedRows !==1) {
+                                return res.func('处理球队活动权限时发生错误',400)
+                            }
+                           // return res.func('球队活动管理权限成功更新',200)
+                        })
+                    }
+                })
                 db.query(sqlUpt1, [{newCaptain, CaptainID}, teamID], (err1, result1) => {
                     if (err1) return res.func(err1)
                     // console.log(result1)
@@ -326,6 +355,8 @@ function teamQuit (req,res) {
                     })
                 })
             })
+
+
         } else {
             const sqlUpt = `update users_test set? where id=? and isDelete=0`
             db.query(sqlUpt, [{teamID: null}, userID], (err2, result2) => {
