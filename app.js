@@ -12,14 +12,12 @@ const joi = require('joi')
 const app = express()
 
 
-
-
-app.use( function(req,res,next){
-    res.func = function (err,status=1){
+app.use(function (req, res, next) {
+    res.func = function (err, status = 1) {
         res.send(
             {
                 status,
-                message:err instanceof Error ? err.message:err
+                message: err instanceof Error ? err.message : err
             }
         )
     }
@@ -41,7 +39,7 @@ app.use( function(req,res,next){
 app.use(cors())
 app.use(express.json())
 //解析表单数据(application/x-www-form-urlencoded)
-app.use(express.urlencoded({extended:false}))
+app.use(express.urlencoded({ extended: false }))
 
 // app.get('/uploads/img',(req,res)=>{
 //     res.func('成功',200)
@@ -49,18 +47,17 @@ app.use(express.urlencoded({extended:false}))
 
 app.use(express.static('./uploads'))
 
-app.use('/user',userRouter)
-app.use('/my',userInfoRouter)
-app.use('/team',teamRouter)
+app.use('/user', userRouter)
+app.use('/my', userInfoRouter)
+app.use('/team', teamRouter)
 
-app.use( (err,req,res,next)=>{
-    if(err instanceof  joi.ValidationError)  return res.func(err)
+app.use((err, req, res, next) => {
+    if (err instanceof joi.ValidationError) return res.func(err)
     // if(err.name === 'UnauthorizedError') return res.func('身份认证失败')
     res.func(err)
 })
 
 
-
-app.listen(3030,()=>{
+app.listen(3030, () => {
     console.log('服务器运行在 http://127.0.0.1:3030')
 })
