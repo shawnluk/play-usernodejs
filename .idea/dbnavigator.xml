@@ -39,6 +39,9 @@
     <connection id="38d54808-95c1-4f8c-b701-0275b2901b22" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="38d54808-95c1-4f8c-b701-0275b2901b22" dataset="playwithusdb_test.team_test" active-filter-id="6f974248-9f47-4668-ad5e-3cd38b75862f">
+      <filter id="6f974248-9f47-4668-ad5e-3cd38b75862f" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
+    </filter-actions>
     <filter-actions connection-id="38d54808-95c1-4f8c-b701-0275b2901b22" dataset="playwithusdb_test.users_test" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="38d54808-95c1-4f8c-b701-0275b2901b22" dataset="playwithusdb_test.team_activity" active-filter-id="EMPTY_FILTER" />
   </component>

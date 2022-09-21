@@ -21,7 +21,7 @@ exports.getTeamMember = (req, res) => {
 
         //验证用户所在球队
         const userID = payload.id
-        const sql = `select teamID from users_test where id=?`
+        const sql = `select teamID from user_team where userID=? and isTrue=1`
         db.query(sql, userID, (err, result) => {
             if (err) {
                 return res.func(err)
@@ -33,7 +33,7 @@ exports.getTeamMember = (req, res) => {
             if (result.length === 1 && result[0].teamID !== teamID) {
                 return res.func('所提交teamID与你所在的teamID有误', 400)
             }
-            const sqls = `select id,username from users_test where teamID='${ teamID }' ; select userID,username from userjointeam where teamID=${ teamID } and joinStatusYes=1`
+            const sqls = `select userID,username from user_team where teamID='${ teamID }' and isTrue=1; select userID,username from userjointeam where teamID=${ teamID } and joinStatusYes=1`
             db.query(sqls, (errs, results) => {
                 if (errs) {
                     return res.func(errs)

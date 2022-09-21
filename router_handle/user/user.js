@@ -26,10 +26,10 @@ exports.userRegister = (req, res) => {
     db.query(sqls[0], userinfo.username, (error, result) => {
         if (error) { return res.func(error) }
         if (result.length > 0) { return res.func('用户名被占用') }
-        const createTime = moment(req.body.time).format()
+        // const createTime = moment(req.body.time).format()
 
         userinfo.password = bcrypt.hashSync(userinfo.password, 10)
-        db.query(sqls[1], { username: userinfo.username, password: userinfo.password, createTime,isDelete: 0 }, (err1, res1) => {
+        db.query(sqls[1], { username: userinfo.username, password: userinfo.password,isDelete: 0 }, (err1, res1) => {
             if (err1) { return res.func(err1) }
             // console.log(result)
             if (res1.affectedRows !== 1) { return res.func('注册账号插入失败', 400) }

@@ -50,7 +50,7 @@ function createActivity (req, res) {
     const acti_desc = req.body.desc
     const acti_resource = req.body.resource
     const acti_utc = moment(date1 + "\xa0" + date2, 'YYYY-MM-DD HH:mm:ss').format()
-    const createTime = moment(req.body.createTime).format()
+    // const createTime = moment(req.body.createTime).format()
 
 
     const token = req.headers['authorization'].split(' ')[1]
@@ -107,7 +107,7 @@ function createActivity (req, res) {
                     acti_desc,
                     acti_resource,
                     acti_isOnApply: 1,
-                    createTime
+                    // createTime
                 }], (err2, res2) => {
                     if (err2) {
                         return res.func(err2)
@@ -142,6 +142,14 @@ function getActivity (req, res) {
         if (error) {
             return res.func(error)
         }
+        // console.log(result)
+        if(result.length ===0){
+           return res.send({
+                status: 201,
+                message: '无任何活动信息',
+                ActiData:[]
+            })
+        }
         res.send({
             status: 200,
             message: '获取活动列表成功',
@@ -163,7 +171,7 @@ function deleteActivity (req, res) {
 
     const token = req.headers['authorization'].split(' ')[1]
     const acti_id = req.body.acti_id
-    const updateTime = moment(req.body.updateTime).format()
+    // const updateTime = moment(req.body.updateTime).format()
     // const userID = req.body.userID
     // console.log(token)
     jwt.verify(token, config.jwtSecretKey, (error, payload) => {
@@ -175,7 +183,7 @@ function deleteActivity (req, res) {
         const userID = payload.id
         const sqls = [
             `select id from team_activity where captainID=? and acti_isOnApply=1`,
-            `update team_activity set acti_isOnApply=?,updateTime=? where id=? and captainID=?`
+            `update team_activity set acti_isOnApply=? where id=? and captainID=?`
         ]
         db.query(sqls[0], userID, (err, result) => {
             // console.log(result)
@@ -183,7 +191,7 @@ function deleteActivity (req, res) {
                 return res.func(err)
             }
             if (result.length === 1 && result[0].id === acti_id) {
-                db.query(sqls[1], [0, updateTime,acti_id, userID], (err1, res1) => {
+                db.query(sqls[1], [0,acti_id, userID], (err1, res1) => {
                     if (err1) {
                         return res.func(err1)
                     }

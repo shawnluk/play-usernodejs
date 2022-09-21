@@ -35,7 +35,7 @@ exports.setuserPic = (req, res) => {
                     if (errors) { throw errors; }
                     // console.log('本地文件:' + newPicName + '删除成功！');
                 })
-                const userPic = obj.location
+                const userPic = 'https://' + obj.location
                 const sql = `update users_test set userPic=? where id=? and isDelete=0`
                 db.query(sql, [userPic, userID], (err, result) => {
                     if (err) return res.func(err)

@@ -12,7 +12,7 @@ exports.baseInfoSet = function (req, res) {
             // console.log(err.message + '链接数据库失败')
         }
     })
-    console.log(req.body)
+    // console.log(req.body)
     const token = req.headers['authorization'].split(' ')[1]
     jwt.verify(token, config.jwtSecretKey, (error, payload) => {
         if (error) {
@@ -21,9 +21,9 @@ exports.baseInfoSet = function (req, res) {
         const userID = payload.id
         const nickname = req.body.nickname
         const email = req.body.email
-        const updateTime = moment(req.body.updateTime).format()
-        const sql = `update users_test set nickname=?,email=?,updateTime=? where id=? and isDelete=0`
-        db.query(sql, [nickname,email,updateTime, userID], (err, result) => {
+        // const updateTime = moment(req.body.updateTime).format()
+        const sql = `update users_test set nickname=?,email=? where id=? and isDelete=0 and isValid=1`
+        db.query(sql, [nickname,email, userID], (err, result) => {
             if (err) return res.func(err)
             if (result.affectedRows !== 1) return res.func('个人信息更新失败', 400)
             res.send({
@@ -32,7 +32,7 @@ exports.baseInfoSet = function (req, res) {
                 setUserData: {
                     nickname,
                     email,
-                    updateTime
+                    // updateTime
                 }
             })
         })

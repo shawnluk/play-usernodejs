@@ -20,8 +20,8 @@ exports.setPassword = (req, res) => {
             return res.func('token过期，请重新登录', 401)
         }
         const sqls = [
-            `select * from users_test where id=? and isDelete=0`,
-            `update users_test set password=?,updateTime=? where id=? and isDelete=0`
+            `select * from users_test where id=? and isDelete=0 and isValid=1`,
+            `update users_test set password=? where id=? and isDelete=0 and isValid=1`
         ]
 
         const userID = payload.id
@@ -32,7 +32,7 @@ exports.setPassword = (req, res) => {
             const compareResult = bcrypt.compareSync(req.body.oldPass, result[0].password)
             if (!compareResult) { return res.func('旧密码提交错误', 400) }
             req.body.newPass = bcrypt.hashSync(req.body.newPass, 10)
-            const updateTime = moment(req.body.time).format()
+            // const updateTime = moment(req.body.time).format()
             db.query(sqls[1], [req.body.newPass,updateTime, userID], (err1, res1) => {
                 if (err1) return res.func(err1)
                 if (res1.affectedRows !== 1) return res.func('重置密码失败',400)
@@ -40,7 +40,7 @@ exports.setPassword = (req, res) => {
                     status: 200,
                     message: '重置密码成功',
                     // newToken：
-                    updateTime
+                    // updateTime
                 })
             })
         })

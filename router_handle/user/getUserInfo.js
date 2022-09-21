@@ -20,7 +20,7 @@ exports.gerUserInfo = (req, res) => {
         if (error) { return res.func('token过期，请重新登录', 401 )
         }
         const user_id = payload.id
-        const sql = `select id,username,nickname,email,userPic,teamID,(select teamName from team_test where id = users_test.teamID)as teamName from users_test where id=? and isDelete=0`
+        const sql = `select id,username,nickname,email,userPic,createTime from users_test where id=? and isDelete=0 and isValid=1`
         db.query(sql, user_id, (err, result) => {
             if (err) return res.func(err)
             // console.log(result)
