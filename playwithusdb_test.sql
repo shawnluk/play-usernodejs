@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 09/09/2022 06:06:28
+ Date: 26/09/2022 22:35:35
 */
 
 SET NAMES utf8mb4;
@@ -37,16 +37,16 @@ CREATE TABLE `team_activity`  (
   `acti_desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `acti_resource` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `acti_isOnApply` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `createTime` datetime(0) NULL DEFAULT NULL,
-  `updateTime` datetime(0) NULL DEFAULT NULL,
+  `createTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `updateTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of team_activity
 -- ----------------------------
-INSERT INTO `team_activity` VALUES (1, 'admin1', 1, '皇家马德里', 1, 'admin1', 1, '皇马第10冠', '2022-09-30 14:00:17', '2022-09-30 周五 14:00:17', '联赛或杯赛', '广州市天河区', 'come on', '线下租约场地', '1', '2022-09-05 14:00:24', NULL);
-INSERT INTO `team_activity` VALUES (2, 'admin8', 8, '中华人民共和国', 3, 'admin8', 8, '中国世界杯', '2022-09-30 14:06:20', '2022-09-30 周五 14:06:20', '自定义比赛', '中国北京', '来', '线上电竞比赛', '1', '2022-09-05 14:06:25', NULL);
+INSERT INTO `team_activity` VALUES (1, 'admin1', 1, '中华人民共和国', 1, 'admin1', 1, '皇马第十冠', '2022-09-30 11:27:49', '2022-09-30 周五 11:27:49', '联赛或杯赛', '广州市荔湾区', '皇马VS马竞', '线下租约场地', '1', '2022-09-19 11:27:50', '2022-09-20 23:02:45');
+INSERT INTO `team_activity` VALUES (2, 'admin5', 5, '皇家马德里', 2, 'admin5', 5, '皇马第十一冠', '2022-09-23 15:20:59', '2022-09-23 周五 15:20:59', '友谊赛', '广州市天河区', '来吧', '线上电竞比赛', '1', '2022-09-21 15:21:06', '2022-09-21 15:21:06');
 
 -- ----------------------------
 -- Table structure for team_test
@@ -62,67 +62,48 @@ CREATE TABLE `team_test`  (
   `teamSlogan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '球队口号',
   `teamPic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '球队头像保存路径',
   `teamDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '球队描述',
-  `createTime` datetime(0) NULL DEFAULT NULL,
-  `updateTime` datetime(0) NULL DEFAULT NULL,
+  `createTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `updateTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `deleteTime` datetime(0) NULL DEFAULT NULL,
   `isDelete` int(0) NULL DEFAULT NULL,
   `fkID` int(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `fkID`(`fkID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of team_test
 -- ----------------------------
-INSERT INTO `team_test` VALUES (1, '皇家马德里', 'admin1', 1, 'admin1', 1, '我执纯白', 'xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/teamPic/1.png', '伯纳乌球场', '2022-09-05 13:57:21', NULL, NULL, 0, 1);
-INSERT INTO `team_test` VALUES (2, '巴塞罗那', 'admin4', 4, 'admin4', 4, '红蓝军团', 'xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/teamPic/2.png', '诺坎普', '2022-09-05 14:03:45', NULL, NULL, 0, 2);
-INSERT INTO `team_test` VALUES (3, '中华人民共和国', 'admin8', 8, 'admin8', 8, '中国队', 'xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/teamPic/3.png', '中国队加油', '2022-09-05 14:05:28', NULL, NULL, 0, 3);
+INSERT INTO `team_test` VALUES (1, '中华人民共和国', 'admin1', 1, 'admin1', 1, '中国队', 'https://xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/teamPic/1.png', '', '2022-09-16 19:59:09', '2022-09-20 23:02:38', NULL, 0, NULL);
+INSERT INTO `team_test` VALUES (2, '皇家马德里', 'admin5', 5, 'admin5', 5, '我执纯白', 'https://xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/teamPic/2.png', '伯纳乌', '2022-09-20 16:03:17', '2022-09-20 16:03:18', NULL, 0, NULL);
+INSERT INTO `team_test` VALUES (3, '巴塞罗那', 'admin6', 6, 'admin6', 6, '红蓝军团', 'https://xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/teamPic/3.png', '巴萨', '2022-09-20 16:06:46', '2022-09-20 16:06:47', NULL, 0, NULL);
+INSERT INTO `team_test` VALUES (4, 'team7', 'admin7', 7, 'admin7', 7, '7', '', '7', '2022-09-20 22:01:32', '2022-09-20 22:14:40', '2022-09-20 22:14:40', 1, NULL);
 
 -- ----------------------------
--- Table structure for time_test
+-- Table structure for user_team
 -- ----------------------------
-DROP TABLE IF EXISTS `time_test`;
-CREATE TABLE `time_test`  (
+DROP TABLE IF EXISTS `user_team`;
+CREATE TABLE `user_team`  (
   `id` int(0) NOT NULL AUTO_INCREMENT,
-  `createTime` datetime(0) NULL DEFAULT NULL,
-  `updateTime` datetime(0) NULL DEFAULT NULL,
+  `userID` int(0) NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `teamID` int(0) NOT NULL,
+  `teamName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `isTrue` int(0) NOT NULL DEFAULT 1,
+  `createTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `updateTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of time_test
+-- Records of user_team
 -- ----------------------------
-INSERT INTO `time_test` VALUES (1, '2022-09-04 00:00:00', NULL);
-INSERT INTO `time_test` VALUES (2, '2022-09-04 00:00:00', NULL);
-INSERT INTO `time_test` VALUES (3, '2022-09-04 12:07:33', NULL);
-INSERT INTO `time_test` VALUES (4, '2022-09-04 12:07:46', NULL);
-INSERT INTO `time_test` VALUES (5, '2022-09-04 12:07:47', NULL);
-INSERT INTO `time_test` VALUES (6, '2022-09-04 12:08:07', NULL);
-INSERT INTO `time_test` VALUES (7, '2022-09-04 12:08:10', NULL);
-INSERT INTO `time_test` VALUES (8, '2022-09-04 12:08:11', NULL);
-INSERT INTO `time_test` VALUES (9, '2022-09-04 12:08:30', NULL);
-INSERT INTO `time_test` VALUES (10, '2022-09-04 12:08:32', NULL);
-INSERT INTO `time_test` VALUES (11, '2022-09-04 12:09:04', NULL);
-INSERT INTO `time_test` VALUES (12, '2022-09-04 12:11:02', NULL);
-INSERT INTO `time_test` VALUES (13, '2022-09-04 12:12:12', NULL);
-INSERT INTO `time_test` VALUES (14, '2022-09-04 12:13:38', NULL);
-INSERT INTO `time_test` VALUES (15, '2022-09-04 12:13:38', NULL);
-INSERT INTO `time_test` VALUES (16, '2022-09-04 14:55:12', NULL);
-INSERT INTO `time_test` VALUES (17, '2022-09-04 14:56:02', NULL);
-INSERT INTO `time_test` VALUES (18, '2022-09-04 14:56:04', NULL);
-INSERT INTO `time_test` VALUES (19, '2022-09-04 14:56:19', NULL);
-INSERT INTO `time_test` VALUES (20, '2022-09-04 14:56:58', NULL);
-INSERT INTO `time_test` VALUES (21, '2022-09-04 14:57:00', NULL);
-INSERT INTO `time_test` VALUES (22, '2022-09-04 14:57:09', NULL);
-INSERT INTO `time_test` VALUES (23, '2022-09-04 14:57:55', NULL);
-INSERT INTO `time_test` VALUES (24, '2022-09-04 14:58:22', NULL);
-INSERT INTO `time_test` VALUES (25, '2022-09-04 14:58:24', NULL);
-INSERT INTO `time_test` VALUES (26, '2022-09-04 14:58:57', NULL);
-INSERT INTO `time_test` VALUES (27, '2022-09-04 14:58:59', NULL);
-INSERT INTO `time_test` VALUES (28, '2022-09-04 14:59:41', NULL);
-INSERT INTO `time_test` VALUES (29, '1970-01-01 08:00:00', NULL);
-INSERT INTO `time_test` VALUES (30, '2022-09-04 00:00:00', NULL);
-INSERT INTO `time_test` VALUES (31, '2022-09-04 00:00:00', NULL);
+INSERT INTO `user_team` VALUES (1, 1, 'admin1', 1, '中华人民共和国', 1, '2022-09-16 19:59:09', '2022-09-20 23:02:30');
+INSERT INTO `user_team` VALUES (2, 2, 'admin2', 1, '中华人民共和国', 1, '2022-09-16 19:59:09', '2022-09-20 22:38:36');
+INSERT INTO `user_team` VALUES (3, 4, 'admin4', 1, '中华人民共和国', 1, '2022-09-20 15:55:26', '2022-09-20 22:24:32');
+INSERT INTO `user_team` VALUES (4, 5, 'admin5', 2, '皇家马德里', 1, '2022-09-20 16:03:17', '2022-09-20 16:03:17');
+INSERT INTO `user_team` VALUES (5, 6, 'admin6', 3, '巴塞罗那', 1, '2022-09-20 16:06:46', '2022-09-20 16:06:46');
+INSERT INTO `user_team` VALUES (6, 7, 'admin7', 4, 'team7', 0, '2022-09-20 22:01:32', '2022-09-20 22:14:40');
 
 -- ----------------------------
 -- Table structure for userjointeam
@@ -135,47 +116,91 @@ CREATE TABLE `userjointeam`  (
   `teamID` int(0) NOT NULL,
   `teamName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `joinStatusYes` int(0) NULL DEFAULT NULL,
-  `createTime` datetime(0) NULL DEFAULT NULL,
-  `updateTime` datetime(0) NULL DEFAULT NULL,
+  `createTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `updateTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '撤销申请',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of userjointeam
 -- ----------------------------
-INSERT INTO `userjointeam` VALUES (1, 3, 'admin3', 1, '皇家马德里', 1, '2022-09-05 14:03:08', NULL);
+INSERT INTO `userjointeam` VALUES (1, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 14:53:31', '2022-09-20 15:10:04');
+INSERT INTO `userjointeam` VALUES (2, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 15:17:30', '2022-09-20 15:18:34');
+INSERT INTO `userjointeam` VALUES (3, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 15:23:07', '2022-09-20 15:29:01');
+INSERT INTO `userjointeam` VALUES (4, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 15:29:30', '2022-09-20 15:32:31');
+INSERT INTO `userjointeam` VALUES (5, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 15:32:35', '2022-09-20 16:48:58');
+INSERT INTO `userjointeam` VALUES (6, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 16:52:51', '2022-09-20 16:52:54');
+INSERT INTO `userjointeam` VALUES (7, 3, 'admin3', 3, '巴塞罗那', 0, '2022-09-20 16:54:36', '2022-09-20 16:54:44');
+INSERT INTO `userjointeam` VALUES (8, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 16:58:55', '2022-09-20 16:58:58');
+INSERT INTO `userjointeam` VALUES (9, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:01:53', '2022-09-20 17:01:55');
+INSERT INTO `userjointeam` VALUES (10, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:02:13', '2022-09-20 17:02:14');
+INSERT INTO `userjointeam` VALUES (11, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:02:31', '2022-09-20 17:02:33');
+INSERT INTO `userjointeam` VALUES (12, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:04:04', '2022-09-20 17:04:05');
+INSERT INTO `userjointeam` VALUES (13, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:04:13', '2022-09-20 17:04:16');
+INSERT INTO `userjointeam` VALUES (14, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:04:50', '2022-09-20 17:04:53');
+INSERT INTO `userjointeam` VALUES (15, 3, 'admin3', 3, '巴塞罗那', 0, '2022-09-20 17:05:02', '2022-09-20 17:05:04');
+INSERT INTO `userjointeam` VALUES (16, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:05:10', '2022-09-20 17:05:12');
+INSERT INTO `userjointeam` VALUES (17, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:06:45', '2022-09-20 17:06:48');
+INSERT INTO `userjointeam` VALUES (18, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:07:06', '2022-09-20 17:07:24');
+INSERT INTO `userjointeam` VALUES (19, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:07:47', '2022-09-20 17:07:54');
+INSERT INTO `userjointeam` VALUES (20, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:08:36', '2022-09-20 17:08:38');
+INSERT INTO `userjointeam` VALUES (21, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 17:09:23', '2022-09-20 17:09:28');
+INSERT INTO `userjointeam` VALUES (22, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:10:01', '2022-09-20 17:10:03');
+INSERT INTO `userjointeam` VALUES (23, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:10:58', '2022-09-20 17:10:59');
+INSERT INTO `userjointeam` VALUES (24, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:11:32', '2022-09-20 17:11:33');
+INSERT INTO `userjointeam` VALUES (25, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:13:05', '2022-09-20 17:13:09');
+INSERT INTO `userjointeam` VALUES (26, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:13:16', '2022-09-20 17:13:33');
+INSERT INTO `userjointeam` VALUES (27, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:15:05', '2022-09-20 17:15:12');
+INSERT INTO `userjointeam` VALUES (28, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:15:37', '2022-09-20 17:15:39');
+INSERT INTO `userjointeam` VALUES (29, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:15:43', '2022-09-20 17:15:45');
+INSERT INTO `userjointeam` VALUES (30, 3, 'admin3', 2, '皇家马德里', 0, '2022-09-20 17:15:49', '2022-09-20 17:15:50');
+INSERT INTO `userjointeam` VALUES (31, 3, 'admin3', 1, '中华人民共和国', 0, '2022-09-20 21:02:03', '2022-09-20 21:02:21');
+INSERT INTO `userjointeam` VALUES (32, 3, 'admin3', 1, '中华人民共和国', 1, '2022-09-20 21:03:45', '2022-09-20 21:03:45');
+INSERT INTO `userjointeam` VALUES (33, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:00:51', '2022-09-22 10:03:28');
+INSERT INTO `userjointeam` VALUES (34, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:03:34', '2022-09-22 10:04:37');
+INSERT INTO `userjointeam` VALUES (35, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:04:50', '2022-09-22 10:10:15');
+INSERT INTO `userjointeam` VALUES (36, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:10:19', '2022-09-22 10:15:25');
+INSERT INTO `userjointeam` VALUES (37, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:15:30', '2022-09-22 10:16:15');
+INSERT INTO `userjointeam` VALUES (38, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:18:14', '2022-09-22 10:21:15');
+INSERT INTO `userjointeam` VALUES (39, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:21:30', '2022-09-22 10:22:18');
+INSERT INTO `userjointeam` VALUES (40, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 10:22:25', '2022-09-22 13:33:57');
+INSERT INTO `userjointeam` VALUES (41, 9, 'admin9', 1, '中华人民共和国', 1, '2022-09-22 10:28:21', '2022-09-22 10:28:21');
+INSERT INTO `userjointeam` VALUES (42, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 13:34:01', '2022-09-22 13:34:15');
+INSERT INTO `userjointeam` VALUES (43, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 13:34:19', '2022-09-22 13:35:36');
+INSERT INTO `userjointeam` VALUES (44, 8, 'admin8', 1, '中华人民共和国', 0, '2022-09-22 13:35:45', '2022-09-22 13:36:05');
+INSERT INTO `userjointeam` VALUES (45, 8, 'admin8', 1, '中华人民共和国', 1, '2022-09-22 13:36:09', '2022-09-22 13:36:09');
 
 -- ----------------------------
 -- Table structure for users_test
 -- ----------------------------
 DROP TABLE IF EXISTS `users_test`;
 CREATE TABLE `users_test`  (
-  `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `id` int(0) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名',
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '密码',
   `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `userPic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `teamID` int(0) NULL DEFAULT NULL,
-  `createTime` datetime(0) NULL DEFAULT NULL,
-  `updateTime` datetime(0) NULL DEFAULT NULL,
+  `createTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `updateTime` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
   `lastLoginTime` datetime(0) NULL DEFAULT NULL,
-  `isDelete` int(0) NULL DEFAULT NULL,
+  `isDelete` int(0) NOT NULL DEFAULT 0 COMMENT '是否已经删除',
+  `isValid` int(0) NOT NULL DEFAULT 1 COMMENT '是否有效',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `id`(`id`) USING BTREE,
-  INDEX `teamID_fk`(`teamID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表 测试Beta' ROW_FORMAT = Dynamic;
+  INDEX `id`(`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表 测试Beta' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users_test
 -- ----------------------------
-INSERT INTO `users_test` VALUES (1, 'admin1', '$2a$10$dIBzk6KZ8uehtGHZS18FOeSV6o3h.BtkI13IykOo2EXNw2G7kCa5S', 'nick1', '1@qq.com', 'xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/userPic/admin1.png', 1, '2022-09-05 13:55:26', '2022-09-05 13:56:55', '2022-09-05 13:55:26', 0);
-INSERT INTO `users_test` VALUES (2, 'admin2', '$2a$10$e6vY4BJe42hmJCzG4gnttOCbK3K6M.BcB93sfT7IZfo7pPH0A5.qu', NULL, NULL, NULL, 1, '2022-09-05 14:01:07', NULL, '2022-09-05 14:01:08', 0);
-INSERT INTO `users_test` VALUES (3, 'admin3', '$2a$10$sN.j9yKtB9t10J7BzGU6HeohO079EWoq0riLwnA7MXbZfR/9DDbfW', NULL, NULL, NULL, NULL, '2022-09-05 14:02:59', NULL, '2022-09-05 14:02:59', 0);
-INSERT INTO `users_test` VALUES (4, 'admin4', '$2a$10$YvUO260ibiC7aQobWazSc..Lvepy9jqlIoDKY996xxTISfYmdhvz6', NULL, NULL, NULL, 2, '2022-09-05 14:03:24', NULL, '2022-09-05 14:03:24', 0);
-INSERT INTO `users_test` VALUES (5, 'admin5', '$2a$10$oeYU60Z3ydgmRyNlU35Pb.lJuwWs880uRo6p1XAeabMkK8SdB1yQ2', NULL, NULL, NULL, 1, '2022-09-05 14:04:17', NULL, '2022-09-05 14:04:17', 0);
-INSERT INTO `users_test` VALUES (6, 'admin6', '$2a$10$QlZl3KZBty3sTr4oOYZJ4OIVoK3jhhP20ZgUjXR6LJq4fCxhOcNWq', NULL, NULL, NULL, NULL, '2022-09-05 14:04:34', NULL, '2022-09-05 14:04:34', 0);
-INSERT INTO `users_test` VALUES (7, 'admin7', '$2a$10$Cl1tOJ8pbE.6/BC/kiE0puFdcXeYEC6uR6eYV6h6Q7Cs81/GUmZNS', NULL, NULL, NULL, NULL, '2022-09-05 14:04:48', NULL, '2022-09-05 14:04:48', 0);
-INSERT INTO `users_test` VALUES (8, 'admin8', '$2a$10$bWen0CJ4ku8yh.AjtibXg.VXPwyuYT/psQcKjJg25K473q119eEqq', NULL, NULL, 'xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/userPic/admin8.png', 3, '2022-09-05 14:05:07', NULL, '2022-09-08 21:26:54', 0);
+INSERT INTO `users_test` VALUES (1, 'admin1', '$2a$10$S1gK9Spns2C1WcIELZsv.OHotjoo.5B2rUBwCdPsXS4GMYaT503mG', 'nick1', '1@qq.com', 'https://xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/userPic/admin1.jpg', '2022-09-16 18:53:16', '2022-09-26 16:37:19', '2022-09-26 16:37:19', 0, 1);
+INSERT INTO `users_test` VALUES (2, 'admin2', '$2a$10$0BfQ.DipoBJS5Q9FJca3xuL45cPUN.TqUB9VEKvB6nZvLqG4KrhhK', NULL, NULL, NULL, '2022-09-16 19:47:08', '2022-09-26 15:20:25', '2022-09-26 15:20:25', 0, 1);
+INSERT INTO `users_test` VALUES (3, 'admin3', '$2a$10$Vklsuykv/xjTFsOYehja.uPZqk6cVjVSIiLHS0Lh0W28NsuxlL4m6', NULL, NULL, NULL, '2022-09-16 19:52:54', '2022-09-21 12:38:37', '2022-09-21 12:38:37', 0, 1);
+INSERT INTO `users_test` VALUES (4, 'admin4', '$2a$10$GvYrqiyU6Ijjfa42sYEro.eAVWROOHHTG.zDW.xygPvU0gCstwKem', NULL, NULL, NULL, '2022-09-20 15:53:33', '2022-09-20 22:20:41', '2022-09-20 22:20:40', 0, 1);
+INSERT INTO `users_test` VALUES (5, 'admin5', '$2a$10$scitpNA0c.5i28P5NV.wZegqHcUgH5UTGiNAdf9eDoRoPp/pSMtXO', NULL, NULL, NULL, '2022-09-20 16:02:57', '2022-09-21 15:17:13', '2022-09-21 15:17:13', 0, 1);
+INSERT INTO `users_test` VALUES (6, 'admin6', '$2a$10$TEyxQB3WyLce6In7YSrY.Oz.k8G5C2gI2Hn6gEsPM188npKuGXYL6', NULL, NULL, NULL, '2022-09-20 16:06:33', '2022-09-20 16:06:33', '2022-09-20 16:06:33', 0, 1);
+INSERT INTO `users_test` VALUES (7, 'admin7', '$2a$10$71TPq.FXnreTC8Y5vwbqT.YFLaC22eId0nhIxRtnFNEJs02t52YPy', 'nick7', '7@qq.com', 'https://xingqiu-tuchuang-1256524210.cos.ap-shanghai.myqcloud.com/10551/userPic/admin7.png', '2022-09-20 16:16:45', '2022-09-20 22:01:19', '2022-09-20 22:01:19', 0, 1);
+INSERT INTO `users_test` VALUES (8, 'admin8', '$2a$10$0pRXrPdnztTKsXtUwRrdG.fiNin/WDbxRFSakbwx5bopNj4sdwi2S', NULL, NULL, NULL, '2022-09-21 20:10:36', '2022-09-26 16:37:50', '2022-09-26 16:37:50', 0, 1);
+INSERT INTO `users_test` VALUES (9, 'admin9', '$2a$10$ywQZhO.0Ygm8mpiQ4QVmzOifibKUT4/aBAtr056GWWLoTQwKh.GTC', NULL, NULL, NULL, '2022-09-22 10:28:10', '2022-09-22 10:28:10', '2022-09-22 10:28:10', 0, 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

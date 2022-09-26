@@ -15,7 +15,7 @@ function teamSearch (req, res) {
         }
     })
 
-    const sql = `select id,teamName from team_test where isDelete=0`
+    const sql = `select id,teamName,CaptainID,newCaptain from team_test where isDelete=0`
     db.query(sql, (err, result) => {
         if (err) res.func(err)
         // console.log(result)

@@ -63,7 +63,7 @@ function createActivity (req, res) {
 
         const sqls = [
             `select CaptainID from team_test where id=? and isDelete=0`,
-            `select id from team_activity where captainId=? and acti_isOnApply=1`,
+            `select id from team_activity where captainID=? and acti_isOnApply=1`,
             `insert into team_activity set?`
         ]
         //判断一下这个team的队长是不是用户本人
