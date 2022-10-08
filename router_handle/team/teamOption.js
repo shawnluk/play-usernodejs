@@ -4,6 +4,7 @@ const config = require('../../config')
 const fs = require('fs')
 const cosUpload = require('../../API/Cos_Cloud') /*腾讯云图床*/
 const moment = require("moment");
+const { jwtSecretKey } = require("../../config");
 
 /*搜索球队*/
 function teamSearch (req, res) {
@@ -30,10 +31,12 @@ function teamSearch (req, res) {
 /*加入球队*/
 function teamJoin (req, res) {
     // res.func('加入球队申请成功',0)
-    // console.log(req.body)
+    console.log(req.body)
     const token = req.headers['authorization'].split(' ')[1]
     const teamID = req.body.teamID
     const teamName = req.body.teamName
+    const CaptainID = req.body.CaptainID
+    const newCaptain = req.body.newCaptain
     // const createTime = moment(req.body.createTime).format()
     if (token !== '' && teamID !== '' && teamName !== '') {
         db.query(`select 1`, (err, result) => {
@@ -56,7 +59,7 @@ function teamJoin (req, res) {
             const sqls = [
                 'select teamID from user_team where userID=? and isTrue=1',
                 'select id from userjointeam where userID=? and joinStatusYes=1',
-                'insert into userjointeam(userID,username,teamID,teamName,joinStatusYes) values(?,?,?,?,?)'
+                'insert into userjointeam(userID,username,teamID,teamName,CaptainID,newCaptain,joinStatusYes) values(?,?,?,?,?,?,?)'
             ]
             //判断是否加入了球队
             db.query(sqls[0], userID, (err, result) => {
@@ -77,7 +80,7 @@ function teamJoin (req, res) {
                         return res.func('你已经申请加入其他球队，不能重复申请', 400)
                     }
                     //加入球队成功
-                    db.query(sqls[2], [userID, username, teamID, teamName, 1], (err2, res2) => {
+                    db.query(sqls[2], [userID, username, teamID, teamName,CaptainID,newCaptain,1], (err2, res2) => {
                         if (err2) {
                             return res.func(err2)
                         }
@@ -111,7 +114,7 @@ function teamJoinStatus (req, res) {
         }
 
         const userID = payload.id
-        const sql = `select teamID,teamName,joinStatusYes from userJoinTeam where userID=? and joinStatusYes=?`
+        const sql = `select teamID,teamName,CaptainID,newCaptain,joinStatusYes from userJoinTeam where userID=? and joinStatusYes=?`
         db.query(sql, [userID, 1], (err, result) => {
             if (err) {
                 return res.func(err)
@@ -128,12 +131,16 @@ function teamJoinStatus (req, res) {
                 // if (result[0].joinStatusYes === 1){
                 const teamName = result[0].teamName
                 const teamID = result[0].teamID
+                const CaptainID = result[0].CaptainID
+                const newCaptain = result[0].newCaptain
                 return res.send({
                     status: 200,
                     message: '球队加入申请中',
                     joinData: {
                         teamName,
-                        teamID
+                        teamID,
+                        CaptainID,
+                        newCaptain
                     }
                 })
             }
@@ -553,6 +560,63 @@ function teamDelete (req, res) {
     })
 }
 
+/*队长同意加入球队*/
+function captainAgreeJoin (req,res) {
+    // console.log(req.body)
+    // { userID: '3', username: 'admin3' }
+    // res.status(200).send('收到队长同意')
+    db.query('select 1', (error, result) => {
+        if (error) return res.func('数据库链接失败')
+    })
+    const token = req.headers['authorization'].split(' ')[1]
+    jwt.verify(token,config.jwtSecretKey,(error,payload)=>{
+        if (error) {
+            return res.func('token过期，请重新登录', 401)
+        }
+        /*申请加入球队的球员ID*/
+        const fromUserID = req.body.userID
+        const fromUsername = req.body.username
+        const userID = payload.id
+        const sqls = [
+            'select CaptainID,teamID,teamName from userjointeam where userID=? and joinStatusYes=1',
+            'update userjointeam set joinStatusYes=0 where userID=? and joinStatusYes=1',
+            'insert into user_team set?'
+        ]
+        db.query(sqls[0],fromUserID,(err,result)=>{
+            if (err) { return res.func(err) }
+            // console.log(result)
+            if (result.length !==1) { return res.func('提交申请的用户ID有误，请重试',400) }
+            const teamID = result[0].teamID
+            const teamName = result[0].teamName
+            const CaptainID = result[0].CaptainID
+            if ( CaptainID !== userID ) {
+                return res.func('你不是该用户申请的球队队长',400)
+            }
+            db.query(sqls[1],fromUserID,(err1,res1)=>{
+                if (err1) { return res.func(err1) }
+                // console.log(res1)
+                if (res1.affectedRows !==1) { return res.func('更新提交申请用户的申请状态失败',400) }
+                db.query(sqls[2],{userID:fromUserID,username:fromUsername,teamID,teamName,isTrue:1},(err2,res2)=>{
+                    if (err2) { return res.func(err2) }
+                    if ( res2.affectedRows !==1 ) {
+                        return res.func('用户球队表插入新数据失败',400)
+                    }
+                    res.send({
+                        status:200,
+                        message:'同意用户加入球队成功',
+                        userData:{
+                            fromUserID,
+                            fromUsername,
+                            teamName,
+                            teamID
+                        }
+                    })
+                })
+            })
+        })
+    })
+}
+
 module.exports = {
     teamSearch,
     teamJoin,
@@ -562,6 +626,7 @@ module.exports = {
     teamQuit,
     teamSetPic,
     teamInfoSet,
-    teamDelete
+    teamDelete,
+    captainAgreeJoin
 }
 

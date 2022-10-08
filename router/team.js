@@ -9,7 +9,8 @@ const {
     deleteTeamJoin,
     teamSetPic,
     teamInfoSet,
-    teamDelete
+    teamDelete,
+    captainAgreeJoin
 } = require('../router_handle/team/teamOption')
 
 const { createActivity, getActivity, deleteActivity } = require('../router_handle/activity/activity')
@@ -33,5 +34,6 @@ router.get('/Activity', getActivity)
 router.post('/deleteActivity', deleteActivity)
 router.post('/setTeamInfo', teamInfoSet)
 router.post('/delete', teamDelete)
+router.post('/captainAgreeJoin',captainAgreeJoin)
 
 module.exports = router
