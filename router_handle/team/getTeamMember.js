@@ -34,10 +34,12 @@ exports.getTeamMember = (req, res) => {
                 return res.func('所提交teamID与你所在的teamID有误', 400)
             }
             const sqls = `select userID,username from user_team where teamID='${ teamID }' and isTrue=1; select userID,username from userjointeam where teamID=${ teamID } and joinStatusYes=1`
+
             db.query(sqls, (errs, results) => {
                 if (errs) {
                     return res.func(errs)
                 }
+                // console.log(results)
                 res.send({
                     status: 200,
                     message: '获取球员列表成功',

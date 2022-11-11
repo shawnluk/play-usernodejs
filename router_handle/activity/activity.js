@@ -26,20 +26,28 @@ function switchRes (newDate) {
 
 function createActivity (req, res) {
     // res.send('创建活动成功')
-    // console.log(req.body)
+    console.log(req.body)
     db.query(`select 1`, (err, result) => {
         if (err) {
             return res.func('连接数据库失败')
             // console.log(err.message + '链接数据库失败')
         }
     })
-    const date2 = moment(req.body.date2).utc(8).format('HH:mm:ss')
-    const date1 = moment(req.body.date1).utc(8).format('YYYY-MM-DD')
+    // const a = moment(req.body.date2).utc(8).format('YYYY-MM-DD HH:mm:ss')
+    // console.log(a)
+    // const b = moment(req.body.date2).day()
+    // const c = switchRes(b)
+    // console.log(c)
+    // const date2 = moment(req.body.date2).utc(8).format('HH:mm:ss')
+    // const date1 = moment(req.body.date1).utc(8).format('YYYY-MM-DD')
+    const date = moment(req.body.date2).utc(8).format('YYYY-MM-DD HH:mm:ss')
     // console.log('date1:'+date1)
     // console.log('date2:'+date2)
-    const weekDate = moment(req.body.date1).day()
+    // const weekDate = moment(req.body.date1).day()
+    const weekDate = moment(req.body.date2).day()
     const week = switchRes(weekDate)
-    const dateActivity = date1 + "\xa0" + week + "\xa0" + date2
+    // const dateActivity = date1 + "\xa0" + week + "\xa0" + date2
+    const dateActivity = date + "\xa0" + week
 
     const teamName = req.body.teamName
     const teamID = req.body.teamID
@@ -49,7 +57,10 @@ function createActivity (req, res) {
     const acti_region = req.body.region
     const acti_desc = req.body.desc
     const acti_resource = req.body.resource
-    const acti_utc = moment(date1 + "\xa0" + date2, 'YYYY-MM-DD HH:mm:ss').format()
+    // const acti_utc = moment(date1 + "\xa0" + date2, 'YYYY-MM-DD HH:mm:ss').format()
+    const acti_utc = req.body.date2
+    // console.log(dateActivity)
+    // console.log(acti_utc)
     // const createTime = moment(req.body.createTime).format()
 
 
@@ -58,7 +69,8 @@ function createActivity (req, res) {
         if (error) {
             return res.func('token过期，请重新登录', 401)
         }
-        const username = payload.username
+        // const username = payload.username
+        // const userAccount = payload.userAccount
         const userID = payload.id
 
         const sqls = [
@@ -91,14 +103,16 @@ function createActivity (req, res) {
                 //已验证用户本人是提交活动申请的球队队长且还未创建活动
                 const newCaptain = payload.username
                 const captainID = payload.id
-
+                // const captainAccount = payload.userAccount
                 db.query(sqls[2], [{
-                    username,
+                    // username,
+                    // userAccount,
                     userID,
                     teamName,
                     teamID,
                     newCaptain,
                     captainID,
+                    // captainAccount,
                     acti_name,
                     acti_utc,
                     acti_date,

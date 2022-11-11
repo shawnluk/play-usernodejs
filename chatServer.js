@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
-const http = require('http')
-const server = http.createServer(app)
+// const http = require('http')
+const https = require('https')
+// const server = http.createServer(app)
+const server = https.createServer(app)
 const socketIO = require('socket.io')
 const UserModel= require('./db/MongoDB')
 
@@ -10,10 +12,6 @@ const ioJoinTeam = socketIO(server, {
         origin: '*'
     }
 });
-
-const ENTER = 0
-const LEAVE = 1
-const MESSAGE = 2
 
 const socketUser =[]
 ioJoinTeam.on('connection', socket => {
@@ -28,7 +26,7 @@ ioJoinTeam.on('connection', socket => {
         })
         console.log(socketUser)
         //存储 连接后的 用户 socketID
-        UserModel.find({username:userObj.username},(error,docs)=>{
+        UserModel.find({userID:userObj.userID},(error,docs)=>{
             // if(error) { return console.log(error) }
             if(error) {
                 ioJoinTeam.to(socket.id).emit('getJoinMsg',{
@@ -48,7 +46,7 @@ ioJoinTeam.on('connection', socket => {
                         })
                     }
                 }
-                UserModel.updateOne({_id:docs[0]._id},{$set:{socketID:socket.id,isOnline:1}},(err,doc)=>{
+                UserModel.updateOne({_id:docs[0]._id},{$set:{socketID:socket.id,username:userObj.username,isOnline:1}},(err,doc)=>{
                     if(err) {
                         ioJoinTeam.to(socket.id).emit('getJoinMsg',{
                             msg:'update your account error',
@@ -232,7 +230,9 @@ ioJoinTeam.on('connection', socket => {
 
 
 server.listen(3000, () => {
-    console.log("ChatServer 运行在 http://127.0.0.1:3000")
+    // console.log("ChatServer 运行在 http://127.0.0.1:3000")
+    console.log("ChatServer 运行在 https://ifangtu.com:3000")
+
 })
 
 

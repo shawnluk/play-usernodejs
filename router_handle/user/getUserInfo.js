@@ -19,8 +19,27 @@ exports.gerUserInfo = (req, res) => {
     jwt.verify(token, config.jwtSecretKey, (error, payload) => {
         if (error) { return res.func('token过期，请重新登录', 401 )
         }
+        // console.log(payload)
+        /* {
+              id: 11,
+              userAccount: 'admin10',
+              username: 'admin10',
+              password: '',
+              nickname: 'admin10',
+              email: null,
+              userPic: '',
+              createTime: '2022-10-24T03:47:06.000Z',
+              updateTime: '2022-10-24T13:56:36.000Z',
+              lastLoginTime: '2022-10-24T13:56:36.000Z',
+              isDelete: 0,
+              isValid: 1,
+              isWechat: 0,
+              iat: 1666663857,
+              exp: 1666750257
+            }
+            */
         const user_id = payload.id
-        const sql = `select id,username,nickname,email,userPic,createTime from users_test where id=? and isDelete=0 and isValid=1`
+        const sql = `select id,username,email,userPic,createTime from users_test where id=? and isDelete=0 and isValid=1`
         db.query(sql, user_id, (err, result) => {
             if (err) return res.func(err)
             // console.log(result)

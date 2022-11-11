@@ -16,7 +16,7 @@ function teamSearch (req, res) {
         }
     })
 
-    const sql = `select id,teamName,CaptainID,newCaptain from team_test where isDelete=0`
+    const sql = `select id,teamName,CaptainID,newCaptain,teamPic from team_test where isDelete=0`
     db.query(sql, (err, result) => {
         if (err) res.func(err)
         // console.log(result)
@@ -31,7 +31,7 @@ function teamSearch (req, res) {
 /*加入球队*/
 function teamJoin (req, res) {
     // res.func('加入球队申请成功',0)
-    console.log(req.body)
+    // console.log(req.body)
     const token = req.headers['authorization'].split(' ')[1]
     const teamID = req.body.teamID
     const teamName = req.body.teamName
@@ -52,42 +52,50 @@ function teamJoin (req, res) {
             }
 
             const userID = payload.id
-            const username = payload.username
-            /* ``````````````
-            //todo =>此处要添加个判断看看是否已存在 用户 加入球队申请√
-            ````````````````*/
-            const sqls = [
-                'select teamID from user_team where userID=? and isTrue=1',
-                'select id from userjointeam where userID=? and joinStatusYes=1',
-                'insert into userjointeam(userID,username,teamID,teamName,CaptainID,newCaptain,joinStatusYes) values(?,?,?,?,?,?,?)'
-            ]
-            //判断是否加入了球队
-            db.query(sqls[0], userID, (err, result) => {
-                if (err) {
-                    return res.func(err)
+            const sql_username = `select username from users_test where id=? and isDelete=0 and isValid=1`
+            db.query(sql_username,userID,(userErr,userRes)=>{
+                if (userErr) { return res.func(userErr,400)  }
+                if (userRes.length !==1) {
+                    return res.func('查询用户名称出错', 400)
                 }
-                // console.log(result)
-                if (result.length !==0) {
-                    return res.func('你已经加入球队，不要乱申请喔', 400)
-                }
-                //是否在申请加入球队中
-                db.query(sqls[1], userID, (err1, res1) => {
-                    if (err1) {
-                        return res.func(err1)
+                const username = userRes[0].username
+
+                /* ``````````````
+                //todo =>此处要添加个判断看看是否已存在 用户 加入球队申请√
+                ````````````````*/
+                const sqls = [
+                    'select teamID from user_team where userID=? and isTrue=1',
+                    'select id from userjointeam where userID=? and joinStatusYes=1',
+                    'insert into userjointeam(userID,username,teamID,teamName,CaptainID,newCaptain,joinStatusYes) values(?,?,?,?,?,?,?)'
+                ]
+                //判断是否加入了球队
+                db.query(sqls[0], userID, (err, result) => {
+                    if (err) {
+                        return res.func(err)
                     }
-                    // console.log(res1)
-                    if (res1.length !== 0) {
-                        return res.func('你已经申请加入其他球队，不能重复申请', 400)
+                    // console.log(result)
+                    if (result.length !==0) {
+                        return res.func('你已经加入球队，不要乱申请喔', 400)
                     }
-                    //加入球队成功
-                    db.query(sqls[2], [userID, username, teamID, teamName,CaptainID,newCaptain,1], (err2, res2) => {
-                        if (err2) {
-                            return res.func(err2)
+                    //是否在申请加入球队中
+                    db.query(sqls[1], userID, (err1, res1) => {
+                        if (err1) {
+                            return res.func(err1)
                         }
-                        if (res2.affectedRows !== 1) {
-                            return res.func('申请加入球队失败,请重试', 400)
+                        // console.log(res1)
+                        if (res1.length !== 0) {
+                            return res.func('你已经申请加入其他球队，不能重复申请', 400)
                         }
-                        res.func('加入球队申请成功', 200)
+                        //加入球队成功
+                        db.query(sqls[2], [userID, username, teamID, teamName,CaptainID,newCaptain,1], (err2, res2) => {
+                            if (err2) {
+                                return res.func(err2)
+                            }
+                            if (res2.affectedRows !== 1) {
+                                return res.func('申请加入球队失败,请重试', 400)
+                            }
+                            res.func('加入球队申请成功', 200)
+                        })
                     })
                 })
             })
@@ -138,16 +146,16 @@ function teamJoinStatus (req, res) {
                     message: '球队加入申请中',
                     joinData: {
                         teamName,
-                        teamID,
+                        id:teamID,
                         CaptainID,
-                        newCaptain
+                        newCaptain,
+                        joinStatus: 1
                     }
                 })
             }
             res.func('系统检测到球队申请数据有误', 400)
         })
     })
-
 }
 
 /*撤销球队加入申请*/
@@ -173,7 +181,7 @@ function deleteTeamJoin (req, res) {
         }
         const userID = payload.id
         // const updateTime = moment(req.body.updateTime).format()
-        const sql = `update  userJoinTeam set joinStatusYes=? where userID=? and joinStatusYes=1`
+        const sql = `update userJoinTeam set joinStatusYes=? where userID=? and joinStatusYes=1`
         db.query(sql, [0,userID], (err, result) => {
             if (err) {
                 return res.func(err.message)
@@ -198,6 +206,7 @@ function teamCreate (req, res) {
     })
 
     const token = req.headers['authorization'].split(' ')[1]
+    // console.log(token)
     jwt.verify(token, config.jwtSecretKey, (error, payload) => {
         if (error) {
             return res.func('token过期，请重新登录', 401)
@@ -206,7 +215,7 @@ function teamCreate (req, res) {
         const username = payload.username
 
         const sqls = [
-            'select teamID from user_team where id=? and isTrue=1',
+            'select teamID from user_team where userID=? and isTrue=1',
             'select id from userjointeam where userID=? and joinStatusYes=1',
             `select id from team_test where teamName=? and isDelete=0`,
             `insert into team_test set?`,
@@ -233,7 +242,7 @@ function teamCreate (req, res) {
                     if (err2) { return res.func(err2) }
                     if (res2.length > 0) { return res.func('球队名已经被注册') }
 
-                    db.query(sqls[3],{ teamName, userID, username, teamSlogan, teamDesc, CaptainID: userID, newCaptain: username, teamPic: '', isDelete: 0 },(err3,res3)=>{
+                    db.query(sqls[3],{ teamName, userID, teamSlogan, teamDesc, CaptainID: userID, newCaptain: username,teamPic: '', isDelete: 0 },(err3,res3)=>{
                         if (err3) { return res.func(err3) }
                         // console.log(res3)
                         const teamID = res3.insertId
@@ -264,8 +273,10 @@ function teamSetPic (req, res) {
         return res.func('你没有添加图片，别乱搞', 404)
     }
     // console.log(req.file)
+    // console.log(req.body)
     const type = req.file.mimetype.split('/')[1]
-    const teamID = req.file.originalname
+    const teamID = req.body.teamID  ? req.body.teamID : req.file.originalname
+    // console.log(teamID)
     const oldPicName = req.file.path
     let Key, newPicName
     if (type === 'png') {
@@ -280,6 +291,7 @@ function teamSetPic (req, res) {
     db.query('select 1', (error, result) => {
         if (error) return res.func('数据库链接失败')
     })
+
 
     const token = req.headers['authorization'].split(' ')[1]
     jwt.verify(token, config.jwtSecretKey, (error, payload) => {
@@ -311,8 +323,9 @@ function teamSetPic (req, res) {
                         if (error) { throw error }
                         // console.log('本地文件:' + newPicName + '删除成功！');
                     })
-                    const userPic = 'https://'+ obj.location
-                    db.query(sqls[1], [userPic, userID, teamID], (err1, res1) => {
+                    const teamPic = 'https://' + obj.location +  '?' +'temp='+ Math.random()
+                    // const teamPic = 'https://'+ obj.location
+                    db.query(sqls[1], [teamPic, userID, teamID], (err1, res1) => {
                         if (err1) {
                             return res.func(err1)
                         }
@@ -331,7 +344,7 @@ function teamSetPic (req, res) {
 }
 
 /*退出球队*/
-function teamQuit (req, res) {
+function teamQuit (req, res)   {
     // console.log(req.body)
     db.query(`select 1`, (err, result) => {
         if (err) {
@@ -516,7 +529,7 @@ function teamDelete (req, res) {
         // console.log(payload)
         const userID = payload.id
         const teamID = req.body.teamID
-        const deleteTime = moment(req.body.deleteTime).format()
+        const deleteTime = req.body.deleteTime?moment(req.body.deleteTime).format():''
 
         const sqls = [
             `select CaptainID from team_test where id=? and isDelete=0`,

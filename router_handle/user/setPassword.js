@@ -27,7 +27,7 @@ exports.setPassword = (req, res) => {
         const userID = payload.id
         db.query(sqls[0], userID, (err, result) => {
             if (err) return res.func(err)
-            if (result.length !== 1) return res.func('用户名不存在')
+            if (result.length !== 1) return res.func('用户账号不存在')
 
             const compareResult = bcrypt.compareSync(req.body.oldPass, result[0].password)
             if (!compareResult) { return res.func('旧密码提交错误', 400) }
