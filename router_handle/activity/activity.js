@@ -33,21 +33,26 @@ function createActivity (req, res) {
             // console.log(err.message + '链接数据库失败')
         }
     })
-    // const a = moment(req.body.date2).utc(8).format('YYYY-MM-DD HH:mm:ss')
-    // console.log(a)
-    // const b = moment(req.body.date2).day()
-    // const c = switchRes(b)
-    // console.log(c)
-    // const date2 = moment(req.body.date2).utc(8).format('HH:mm:ss')
-    // const date1 = moment(req.body.date1).utc(8).format('YYYY-MM-DD')
-    const date = moment(req.body.date2).utc(8).format('YYYY-MM-DD HH:mm:ss')
-    // console.log('date1:'+date1)
-    // console.log('date2:'+date2)
-    // const weekDate = moment(req.body.date1).day()
-    const weekDate = moment(req.body.date2).day()
-    const week = switchRes(weekDate)
-    // const dateActivity = date1 + "\xa0" + week + "\xa0" + date2
-    const dateActivity = date + "\xa0" + week
+    let dateActivity,dateTimestamp
+    if(req.body.mark === 'wx'){
+        const date = moment(req.body.date2).utc(8).format('YYYY-MM-DD HH:mm:ss')
+        const weekDate = moment(req.body.date2).day()
+        const week = switchRes(weekDate)
+         dateActivity = date + "\xa0" + week
+         dateTimestamp =  req.body.date2
+    }else{
+        const date2 = moment(req.body.date2).utc(8).format('HH:mm:ss')
+        const date1 = moment(req.body.date1).utc(8).format('YYYY-MM-DD')
+        // console.log('date1:'+date1)
+        // console.log('date2:'+date2)
+        // const date = moment(req.body.date2).utc(8).format('YYYY-MM-DD HH:mm:ss')
+        const date =  moment(date1 + "\xa0" + date2,"YYYY-MM-DD HH:mm:ss")
+         dateTimestamp =  moment(date).format("x")
+        const weekDate = moment(date).day()
+        const week = switchRes(weekDate)
+         dateActivity = date1 + "\xa0" + date2 + "\xa0" + week
+    }
+
 
     const teamName = req.body.teamName
     const teamID = req.body.teamID
@@ -58,7 +63,7 @@ function createActivity (req, res) {
     const acti_desc = req.body.desc
     const acti_resource = req.body.resource
     // const acti_utc = moment(date1 + "\xa0" + date2, 'YYYY-MM-DD HH:mm:ss').format()
-    const acti_utc = req.body.date2
+    const acti_utc = dateTimestamp
     // console.log(dateActivity)
     // console.log(acti_utc)
     // const createTime = moment(req.body.createTime).format()

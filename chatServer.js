@@ -1,21 +1,23 @@
 const express = require('express')
 const app = express()
-// const http = require('http')
-const https = require('https')
-// const server = http.createServer(app)
-const server = https.createServer(app)
+const http = require('http')
+const server = http.createServer(app)
 const socketIO = require('socket.io')
 const UserModel= require('./db/MongoDB')
 
 const ioJoinTeam = socketIO(server, {
     cors: {
         origin: '*'
-    }
+    },
+    allowEIO3: true
 });
 
 const socketUser =[]
 ioJoinTeam.on('connection', socket => {
-    // console.log(socket.)
+    // console.log(socket.id)
+    ioJoinTeam.to(socket.id).emit('wx',{
+        id:socket.id
+    })
     // const user = JSON.parse(socket.handshake.query.user)
     // console.log(user.username)
     socket.on('connectServer',(userObj)=>{
@@ -80,14 +82,14 @@ ioJoinTeam.on('connection', socket => {
 
 
         /*申请加入球队后向该球队队长发送通知*/
-        socket.on('JoinTeam',(newCaptain)=>{
-            UserModel.find({username:newCaptain},(err,res)=>{
+        socket.on('JoinTeam',(captainObj)=>{
+            UserModel.find({userID:captainObj.CaptainID},(err,res)=>{
                 if (err) { return console.log(err) }
                 // console.log(res)
                 // console.log(res[0].chatContent.some(item=>{ return item.fromUser === user})) ===> true
                 //已存在相同用户发送的消息，只能发送一次 $set
                 const chatLength = res[0].chatContent.length
-                const chatTrue = res[0].chatContent.some(item=>{ return item.fromUser === userObj.username && item.isVoid !==0})
+                const chatTrue = res[0].chatContent.some(item=>{ return item.fromUserID === userObj.userID && item.isVoid !==0})
                 // const chatVoid = res[0].chatContent[0].isVoid
                 // && res[0].chatContent[0].isVoid !==0
                 if(chatLength !==0 && chatTrue){
@@ -107,6 +109,10 @@ ioJoinTeam.on('connection', socket => {
                             const arrSend = res1.chatContent.filter(item =>  item.isVoid === 1 )
                             if(arrSend.length !==0){
                                 ioJoinTeam.to(res[0].socketID).emit('getJoinMsg',{
+                                    // fromUserObj:{
+                                    //     fromUser:userObj.username,
+                                    //     fromUserID:userObj.userID
+                                    // },
                                     msg:arrSend,
                                     status:200
                                 })
@@ -147,8 +153,8 @@ ioJoinTeam.on('connection', socket => {
         })
 
         /*删除加入球队申请后向该球队队长发送通知*/
-        socket.on('deleteJoinTeam',(newCaptain)=>{
-            UserModel.find({username:newCaptain},(err,res)=>{
+        socket.on('deleteJoinTeam',(captainObj)=>{
+            UserModel.find({userID:captainObj.CaptainID},(err,res)=>{
                 if (err) { return console.log(err)}
                 UserModel.findOneAndUpdate(
                     {_id:res[0]._id},
@@ -161,12 +167,12 @@ ioJoinTeam.on('connection', socket => {
                             }
                     },
                     {
-                        arrayFilters:[{ "el.fromUser":userObj.username,"el.isVoid":1 }],
+                        arrayFilters:[{ "el.fromUserID":userObj.userID,"el.isVoid":1 }],
                         new:true
                     },
                     (err1,res1)=>{
                         if (err1) { return console.log(err1) }
-                        const arrDeleteSend = res1.chatContent.filter(item =>  item.isVoid === 0 && item.fromUser === userObj.username ).slice(-1)
+                        const arrDeleteSend = res1.chatContent.filter(item =>  item.isVoid === 0 && item.fromUserID === userObj.userID ).slice(-1)
                         const arrSend = res1.chatContent.filter(item =>  item.isVoid ===1)
                         ioJoinTeam.to(res[0].socketID).emit('getDeleteJoinMsg',{
                             msg:arrDeleteSend,
@@ -214,7 +220,7 @@ ioJoinTeam.on('connection', socket => {
 
         socket.on('disconnect', () => {
             for( i = 0; i < socketUser.length; i++){
-                if(socketUser[i].username === userObj.username){
+                if(socketUser[i].userID === userObj.userID){
                     socketUser.splice(i,1)
                     // console.log(socketUser)
                     UserModel.updateOne({userID:userObj.userID},{$set:{isOnline:0}},(err,res)=>{
@@ -230,8 +236,8 @@ ioJoinTeam.on('connection', socket => {
 
 
 server.listen(3000, () => {
-    // console.log("ChatServer 运行在 http://127.0.0.1:3000")
-    console.log("ChatServer 运行在 https://ifangtu.com:3000")
+    console.log("ChatServer 运行在 http://127.0.0.1:3000")
+    // console.log("ChatServer 运行在 https://ifangtu.com:3000")
 
 })
 
