@@ -630,6 +630,35 @@ function captainAgreeJoin (req,res) {
     })
 }
 
+/*用户查看选定的球队信息*/
+function teamInfoCheck (req,res){
+    // console.log('收到申请的teamid')
+    // console.log(req.body)
+    db.query('select 1', (error, result) => {
+        if (error) return res.func('数据库链接失败')
+    })
+    const token = req.headers['authorization'].split(' ')[1]
+    const teamID = req.body.teamID
+    jwt.verify(token,config.jwtSecretKey,(error,payload)=>{
+        if (error) { return res.func(error) }
+        const sql = 'SELECT * FROM team_test WHERE id=? AND isDelete=0'
+        db.query(sql,teamID,(errors,results)=>{
+            if (errors) { return res.func(errors) }
+            if (results.length !== 1) { return  res.func('查找对应球队信息失败',400) }
+            if (results.length === 1) {
+                res.send({
+                    status:200,
+                    message:'查找相应球队信息成功',
+                    teamData:results[0]
+                })
+            }
+        })
+    })
+
+
+}
+
+
 module.exports = {
     teamSearch,
     teamJoin,
@@ -640,6 +669,7 @@ module.exports = {
     teamSetPic,
     teamInfoSet,
     teamDelete,
-    captainAgreeJoin
+    captainAgreeJoin,
+    teamInfoCheck
 }
 
